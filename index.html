@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Blackstax Testing Interface</h2>
+    <button onclick="connectWallet()">Connect Wallet</button>
+    <p id="wallet"></p>
+
+    <h3>1. Approve BLX (Only Once)</h3>
+    <button onclick="approveTokens()">Approve 100 BLX</button>
+
+    <h3>2. Stake BLX</h3>
+    <button onclick="stakeTokens()">Stake 100 BLX</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script>
+        const proxyAddress = "YAHAN_PROXY_CONTRACT_ADDRESS_DAALEIN";
+        const tokenAddress = "YAHAN_TOKEN_CONTRACT_ADDRESS_DAALEIN";
+        
+        // Contract ABIs (Yahan apne compiled contract ka ABI daalein)
+        const abi = [/* PASTE YOUR ABI HERE */];
+
+        async function connectWallet() {
+            if (window.ethereum) {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                document.getElementById('wallet').innerText = "Connected: " + accounts[0];
+            }
+        }
+
+        async function approveTokens() {
+            const web3 = new Web3(window.ethereum);
+            const tokenContract = new web3.eth.Contract(abi, tokenAddress);
+            await tokenContract.methods.approve(proxyAddress, "100000000000000000000").send({ from: ethereum.selectedAddress });
+            alert("Approval Success!");
+        }
+
+        async function stakeTokens() {
+            const web3 = new Web3(window.ethereum);
+            const mlmContract = new web3.eth.Contract(abi, proxyAddress);
+            await mlmContract.methods.stake("100000000000000000000", true).send({ from: ethereum.selectedAddress });
+            alert("Stake Successful!");
+        }
+    </script>
+</body>
+</html>
