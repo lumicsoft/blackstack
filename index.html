@@ -5,7 +5,7 @@
     <button onclick="connectWallet()">Connect Wallet</button>
     <p id="wallet"></p>
 
-    <h3>1. Approve BLX (Only Once)</h3>
+    <h3>1. Approve BLX</h3>
     <button onclick="approveTokens()">Approve 100 BLX</button>
 
     <h3>2. Stake BLX</h3>
@@ -16,27 +16,31 @@
         const proxyAddress = "0xc43b35712b32c44b390059e42538e817c7efb6ef";
         const tokenAddress = "0x0C978102175c6b9f90Dd53b249C1E5EdbF82DC3A";
         
-        // Contract ABIs (Yahan apne compiled contract ka ABI daalein)
-        const abi = [/* PASTE YOUR ABI HERE */];
+        // Human Readable ABIs
+        const tokenABI = ["function approve(address spender, uint256 amount) returns (bool)"];
+        const mlmABI = ["function stake(uint256 amount, bool withBurn, address referrer)"];
 
         async function connectWallet() {
             if (window.ethereum) {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 document.getElementById('wallet').innerText = "Connected: " + accounts[0];
+            } else {
+                alert("MetaMask not found!");
             }
         }
 
         async function approveTokens() {
             const web3 = new Web3(window.ethereum);
-            const tokenContract = new web3.eth.Contract(abi, tokenAddress);
+            const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress);
             await tokenContract.methods.approve(proxyAddress, "100000000000000000000").send({ from: ethereum.selectedAddress });
             alert("Approval Success!");
         }
 
         async function stakeTokens() {
             const web3 = new Web3(window.ethereum);
-            const mlmContract = new web3.eth.Contract(abi, proxyAddress);
-            await mlmContract.methods.stake("100000000000000000000", true).send({ from: ethereum.selectedAddress });
+            const mlmContract = new web3.eth.Contract(mlmABI, proxyAddress);
+            // Stake with 100 BLX, withBurn=true, and empty referrer
+            await mlmContract.methods.stake("100000000000000000000", true, "0x0000000000000000000000000000000000000000").send({ from: ethereum.selectedAddress });
             alert("Stake Successful!");
         }
     </script>
